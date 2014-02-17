@@ -14,8 +14,20 @@ module SimpleCalendar
 
       draw_calendar(selected_month, month_array, current_date, events, options, block)
     end
+    
+    def td_classes_for(date, selected_month)
+      today = Time.zone.now.to_date
+      
+      td_class = ["day"]
+      td_class << "today" if today == date
+      td_class << "not-current-month" if selected_month.month != date.month
+      td_class << "past" if today > date
+      td_class << "future" if today < date
+      td_class << "wday-#{date.wday.to_s}" # <- to enable different styles for weekend, etc
+    end
 
     private
+    
     def default_options
       {
           :year           => (params[:year] || Time.zone.now.year).to_i,
@@ -51,12 +63,7 @@ module SimpleCalendar
             content_tag(:tr, :class => (week.include?(today) ? "current-week week" : "week")) do
 
               week.collect do |date|
-                td_class = ["day"]
-                td_class << "today" if today == date
-                td_class << "not-current-month" if selected_month.month != date.month
-                td_class << "past" if today > date
-                td_class << "future" if today < date
-                td_class << "wday-#{date.wday.to_s}" # <- to enable different styles for weekend, etc
+                td_class = td_classes_for(date, selected_month)
 
                 cur_events = day_events(date, events, options[:time_selector])
 
