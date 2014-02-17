@@ -68,6 +68,7 @@ module SimpleCalendar
                 cur_events = day_events(date, events, options[:time_selector])
 
                 td_class << (cur_events.any? ? "events" : "no-events")
+                td_class << cur_events.select {|event| event.respond_to?(:parent_object)}.uniq.map {|event| event.parent_object.class.downcase}.join(" ")
 
                 content_tag(:td, :class => td_class.join(" "), :'data-date-iso'=>date.to_s, 'data-date'=>date.to_s.gsub('-', '/')) do
                   content_tag(:div) do
